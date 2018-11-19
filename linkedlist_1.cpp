@@ -64,7 +64,7 @@ int del (int data)
 	
 	if(table[index]->a == data)
 	{
-		if(tabel[index]->link == NULL)
+		if(table[index]->link == NULL)
 		{
 			free(table[index]);
 			table[index] = NULL;
@@ -77,7 +77,7 @@ int del (int data)
 		return 0;
 	}
 	pnode prenode = comnode;
-	pnode comnode = comnode->link;
+	comnode = comnode->link;
 	while(comnode)
 	{
 		if(comnode->a == data)
