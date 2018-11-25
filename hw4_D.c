@@ -17,7 +17,7 @@ int main()
 			for(k=0;k<4;k++)
 			{
 				scanf(" %c", &ox);
-				if(ox == 'O') score[j][1]++;
+				if(ox == 'O') score[j][1]+=5;
 			}
 			if(max<score[j][0]+score[j][1])
 			{
