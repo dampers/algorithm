@@ -1,31 +1,35 @@
 # include <bits/stdc++.h>
-
 using namespace std;
-
 int tree[1000001];
-
 int main()
 {
-	int n, m;
+	int n, m, p;
 	scanf("%d %d", &n, &m);
 	for(int i=0;i<n;i++) scanf(" %d", &tree[i]);
-	sort(tree, tree+n);
-	for(int i=tree[n-2];i>0;i--)
+	int l = 0, r = 1000000000;
+	while(l<r)
 	{
-		int cut = 0;
-		for(int j=n-1;j>=0;j--)
+		int c = (l+r)/2;
+		long long sum = 0;
+		for(int i=0;i<n;i++)
 		{
-			if((tree[j]-i)>0)
-			{
-				cut += (tree[j]-i);
-			}
-			if(cut>=m) break;
+			sum += tree[i]-c<0?0:tree[i]-c;
 		}
-		if(cut>=m)
+		if(m==sum)
 		{
-			printf("%d", i);
+			p = c;
 			break;
 		}
+		else if(m>sum)
+		{
+			r = c-1;
+		}
+		else if(m<sum)
+		{
+			l = c+1;
+			p = l-1;
+		}
 	}
+	printf("%d", p);
 	return 0;
 }
