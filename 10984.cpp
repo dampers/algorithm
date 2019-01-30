@@ -1,22 +1,26 @@
-# include <stdio.h>
+#include <bits/stdc++.h>
+
+using namespace std;
+typedef long long lld;
 
 int main()
 {
-	int t, n;
-	scanf("%d", &t);
+	int t;
+	scanf(" %d", &t);
 	for(int i=0;i<t;i++)
 	{
+		int n;
 		scanf(" %d", &n);
-		int cnt = 0, tmp;
-		double gcnt = 0, ttmp;
+		int c, csum = 0;
+		double g, sum = 0;
 		for(int j=0;j<n;j++)
 		{
-			scanf(" %d %lf", &tmp, &ttmp);
-			cnt += tmp;
-			gcnt += tmp*ttmp;
-			printf("%f\n", gcnt);
+			scanf(" %d %lf", &c, &g);
+			sum += c*g;
+			csum += c;
 		}
-		printf("%d %.1f", cnt, gcnt/cnt);
-	}
+		sum /= (double)csum;
+		printf("%d %.2lf\n", csum, sum);
+	}	
 	return 0;
 }
