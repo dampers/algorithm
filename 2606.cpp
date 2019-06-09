@@ -3,17 +3,19 @@
 using namespace std;
 typedef long long lld;
 
-vector<vector<int>> con[101];
-bool visit[101][101];
+vector<vector<int>> v[101];
+
 int main()
 {
-	int n, m;
-	scanf("%d %d", &n, &m);
-	int ind, tmp;
-	for(int i=0;i<m;i++)
+	int n, r;
+	scanf("%d %d",&n, &r);
+	for(int i=0;i<r;i++)
 	{
-		scanf("%d %d", &ind, &tmp);
-		con[ind].push_back(tmp);
+		int a, b;
+		scanf("%d %d", &a, &b);
+		v[a].push_back(b);
+		v[b].push_back(a);
 	}
+
 	return 0;
 }
