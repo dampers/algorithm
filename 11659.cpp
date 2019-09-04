@@ -3,32 +3,25 @@
 #define endl '\n'
 using namespace std;
 typedef long long lld;
-int num[9];
+lld num[100005];
 int main()
 {
 	ios_base::sync_with_stdio(NULL);
 	cin.tie(NULL);
 	cout.tie(NULL);
-	int n;
-	cin>>n;
+	int n, m;
+	cin>>n>>m;
 	for(int i=1;i<=n;i++)
 	{
-		num[i] = i;
-		cout<<num[i]<<' ';
+		lld tmp;
+		cin>>tmp;
+		num[i] = num[i-1]+tmp;
 	}
-	cout<<'\n';
-	lld p = n;
-	for(int i=2;i<n;i++)
-		p *= i;
-	p--;
-	while(p--)
+	for(int i=0;i<m;i++)
 	{
-		next_permutation(num+1, num+n+1);
-		for(int i=1;i<=n;i++)
-		{
-			cout<<num[i]<<' ';
-		}
-		cout<<'\n';
+		int a, b;
+		cin>>a>>b;
+		cout<<num[b]-num[a-1]<<endl;
 	}
 	return 0;
 }
