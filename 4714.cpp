@@ -3,21 +3,18 @@
 #define endl '\n'
 using namespace std;
 typedef long long lld;
-int num[81];
+
 int main()
 {
 	ios_base::sync_with_stdio(NULL);
 	cin.tie(NULL);
 	cout.tie(NULL);
-	int a, b, c;
-	cin>>a>>b>>c;
-	for(int i=1;i<=a;i++)
-		for(int j=1;j<=b;j++)
-			for(int k=1;k<=c;k++)
-				num[i+j+k]++;
-	int ind = 0;
-	for(int i=1;i<=a+b+c;i++)
-		if(num[ind]<num[i]) ind = i;
-	cout<<ind;
+	double k;
+	while(1)
+	{
+		scanf("%lf", &k);
+		if(k<0) break;
+		printf("Objects weighing %.2lf on Earth will weigh %.2lf on the moon.\n", k, k*0.167);
+	}
 	return 0;
 }

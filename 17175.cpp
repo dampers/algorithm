@@ -3,21 +3,23 @@
 #define endl '\n'
 using namespace std;
 typedef long long lld;
-int num[81];
+
+lld dp[55];
+
 int main()
 {
 	ios_base::sync_with_stdio(NULL);
 	cin.tie(NULL);
 	cout.tie(NULL);
-	int a, b, c;
-	cin>>a>>b>>c;
-	for(int i=1;i<=a;i++)
-		for(int j=1;j<=b;j++)
-			for(int k=1;k<=c;k++)
-				num[i+j+k]++;
-	int ind = 0;
-	for(int i=1;i<=a+b+c;i++)
-		if(num[ind]<num[i]) ind = i;
-	cout<<ind;
+	int n;
+	cin>>n;
+	dp[0] = 1;
+	dp[1] = 1;
+	for(int i=2;i<=n;i++)
+	{
+		dp[i] = dp[i-1]+dp[i-2]+1;
+		dp[i] %= 1000000007;
+	}
+	cout<<dp[n];
 	return 0;
 }
