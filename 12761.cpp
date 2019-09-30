@@ -1,59 +1,75 @@
 #include <bits/stdc++.h>
-#define swap(a,b) a^=b^=a^=b
+#define swap(a,b) (a)^=(b)^=(a)^=(b)
+#define endl '\n'
 using namespace std;
 typedef long long lld;
-bool visit[100005];
 
-queue<int> bfs;
+bool check[100005];
 
 int main()
 {
-	int a, b, n, m, cnt = 0, nx, ax;
-	scanf("%d %d %d %d",&a, &b, &n, &m);
-	bfs.push(n);
-	visit[n] = true;
-	while(!bfs.empty())
+	ios_base::sync_with_stdio(NULL);
+	cin.tie(NULL);
+	cout.tie(NULL);
+	int a, b, n, m, cnt = 0;
+	cin>>a>>b>>n>>m;
+	queue<int> q;
+	q.push(n);
+	check[n] = true;
+	while(!q.empty())
 	{
-		int size = bfs.size();
+		int size = q.size();
 		while(size--)
 		{
-			nx = bfs.front();
-			bfs.pop();
-			if(nx==m)
-				break;
-			for(int i=0;i<8;i++)
+			int k = q.front();
+			q.pop();
+			if(k==m)
 			{
-				switch(i)
-				{
-					case 0:
-						ax = nx+1; break;
-					case 1:
-						ax = nx-1; break;
-					case 2:
-						ax = nx*a; break;
-					case 3:
-						ax = nx*b; break;
-					case 4:
-						ax = nx+a; break;
-					case 5:
-						ax = nx-a; break;
-					case 6:
-						ax = nx+b; break;
-					case 7:
-						ax = nx-b; break;
-					default:
-						break;
-				}
-				if(ax<0||ax>100000) continue;
-				else if(visit[ax]) continue;
-				bfs.push(ax);
-				visit[ax] = true;
+				cout<<cnt;
+				return 0;
+			}
+			if(k+1<=100000 && !check[k+1])
+			{
+				q.push(k+1);
+				check[k+1] = true;
+			}
+			if(k-1>=0 && !check[k-1])
+			{
+				q.push(k-1);
+				check[k-1] = true;
+			}
+			if(k+a<=100000 && !check[k+a])
+			{
+				q.push(k+a);
+				check[k+a] = true;
+			}
+			if(k-a>=0 && !check[k-a])
+			{
+				q.push(k-a);
+				check[k-a] = true;
+			}
+			if(k+b<=100000 && !check[k+b])
+			{
+				q.push(k+b);
+				check[k+b] = true;
+			}
+			if(k-b>=0 && !check[k-b])
+			{
+				q.push(k-b);
+				check[k-b] = true;
+			}
+			if(k*a<=100000 && !check[k*a])
+			{
+				q.push(k*a);
+				check[k*a] = true;
+			}
+			if(k*b<=100000 && !check[k*b])
+			{
+				q.push(k*b);
+				check[k*b] = true;
 			}
 		}
-		if(nx==m)
-			break;
 		cnt++;
 	}
-	printf("%d", cnt);
 	return 0;
 }
