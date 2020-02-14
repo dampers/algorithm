@@ -15,9 +15,9 @@ room num[200005];
 
 bool comp(room &a, room &b)
 {
-	if(a.e==b.e)
-		return a.s<b.s;
-	return a.e<b.e;
+	if(a.s==b.s)
+		return a.e<b.e;
+	return a.s<b.s;
 }
 
 int main()
@@ -30,25 +30,17 @@ int main()
 	for(int i=0;i<n;i++)
 		cin>>num[i].s>>num[i].e;
 	sort(num, num+n, comp);
-	vector <int> v;
-	v.push_back(0);
-	for(int i=0;i<n;i++)
+	priority_queue <int, vector<int> ,greater<int>> pq;
+	pq.push(num[0].e);
+	for(int i=1;i<n;i++)
 	{
-		int size = v.size();
-		bool flag = false;
-		for(int j=0;j<size;j++)
+		if(pq.top()>num[i].s) pq.push(num[i].e);
+		else
 		{
-			if(!num[i].check && num[i].s>=v[j])	
-			{
-				num[i].check = true;
-				flag = true;
-				v[j] = num[i].e;
-				break;
-			}
-			else continue;
+			pq.pop();
+			pq.push(num[i].e);
 		}
-		if(!flag) v.push_back(num[i].e);
 	}
-	cout<<v.size();
+	cout<<pq.size();
 	return 0;
 }

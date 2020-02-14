@@ -4,61 +4,95 @@
 using namespace std;
 typedef long long lld;
 
-int miro[1001][1001];
-bool check[1001][1001];
-int dx[] = {0, 0, 1, -1}, dy[] = {1, -1, 0, 0};
+int check[1001][1001];
+int table[1001][1001];
+int dx[] = {0, 0, 1, -1};
+int dy[] = {1, -1, 0, 0};
+int direction[4];
+
+vector<pair<int, int> > v;
+int cnt, n, m;
+
+void dfs(int y, int x)
+{
+	for(int i=0;i<4;i++)
+	{
+		int ny = y+dy[i], nx = x+dx[i];
+		if(ny>=n || nx>=m || ny<0 || nx<0 || check[ny][nx]>0) continue;
+		check[ny][nx] = 2;
+		cnt++;
+		cnt %= 10;
+		v.push_back(make_pair(ny, nx));
+		dfs(ny, nx);
+	}
+}
 
 
 int main()
 {
-	ios_base::sync_with_stdio(NULL);
-	cin.tie(NULL);
-	cout.tie(NULL);
-	int n, m;
 	scanf("%d %d", &n, &m);
-	vector<pair<int, int> > wall;
+	for(int i=0;i<n;i++)
+		for(int j=0;j<m;j++)
+			scanf(" %1d", &check[i][j]);
+	int dir = 10;
 	for(int i=0;i<n;i++)
 	{
 		for(int j=0;j<m;j++)
 		{
-			scanf(" %1d", &miro[i][j]);
-			if(miro[i][j]==1) wall.push_back({i,j});
+			if(check[i][j]==0)
+			{
+				v.clear();
+				check[i][j] = 2;
+				cnt = 1;
+				v.push_back(make_pair(i,j));
+				dfs(i, j);
+				cnt %= 10;
+				int size = v.size();
+				for(int k=0;k<size;k++)
+					table[v[k].first][v[k].second] = cnt+dir;
+				dir += 10;
+			}
 		}
 	}
-	int size = wall.size();
-	queue<pair<int, int> > bfs;
-	for(int i=0;i<size;i++)
+	for(int i=0;i<n;i++)
 	{
-		int y = wall[i].first, x = wall[i].second;
-		int cnt = 1;
-		check[y][x] = true;
-		bfs.push({y,x});
-		while(!bfs.empty())
+		for(int j=0;j<m;j++)
 		{
-			int qsize = bfs.size();
-			while(qsize--)
+			if(check[i][j]==1)
 			{
-				int ky = bfs.front().first, kx = bfs.front().second;
-				bfs.pop();
-				for(int ii=0;ii<4;ii++)
+				memset(direction, 0, sizeof(direction));
+				int dpoint = 0;
+				bool flag = false;
+				table[i][j] = 1;
+				for(int k=0;k<4;k++)
 				{
-					int ny = ky+dy[ii], nx = kx+dx[ii];
-					if(ny>=n||ny<0||nx>=m||nx<0||check[ny][nx]||miro[ny][nx]>0) continue;
-					cnt++;
-					printf("ny = %d nx = %d\n", ny, nx);
-					check[ny][nx] = true;
-					bfs.push({ny,nx});
+					flag = false;
+					int ny = i+dy[k], nx = j+dx[k];
+					if(ny>=n || nx>=m || ny<0 || nx<0 || check[ny][nx]==1) continue;
+					int dtmp = table[ny][nx]-(table[ny][nx]%10);
+					for(int dp=0;dp<dpoint;dp++)
+					{
+						if(dtmp==direction[dp])
+						{
+							flag = true;
+							break;
+						}
+					}
+					if(!flag)
+					{
+						table[i][j] += table[ny][nx]%10;
+						direction[dpoint++] = dtmp;
+					}
 				}
 			}
 		}
-		miro[y][x] = cnt;
-		memset(check, false, sizeof(check));
 	}
 	for(int i=0;i<n;i++)
 	{
 		for(int j=0;j<m;j++)
 		{
-			printf("%d", miro[i][j]%10);
+			if(check[i][j]==2) printf("0");
+			else printf("%d", table[i][j]%10);
 		}
 		printf("\n");
 	}
