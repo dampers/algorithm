@@ -1,95 +1,173 @@
 #include <bits/stdc++.h>
+#define swap(a,b) (a)^=(b)^=(a)^=(b)
+#define endl '\n'
 using namespace std;
+typedef long long lld;
 
-char iw[1505][1505];
-bool check[1505][1505];
+int mp[1505][1505];
 int dy[] = {0, 0, 1, -1};
 int dx[] = {1, -1, 0, 0};
-int yx[2][2];
+int parent[1505], r, c;
+int ay, ax, ap, by, bx, bp, cnt;
+
+int find(int u)
+{
+	if(u==parent[u]) return u;
+	return parent[u] = find(parent[u]);
+}
+
+void merge(int u, int v)
+{
+	u = find(u);
+	v = find(v);
+	if(u==v) return;
+	if(u<v) swap(u, v);
+	parent[v] = u;
+}
+
+void dfs(int y, int x, int p)
+{
+	if(y==ay && x==ax) ap = p;
+	else if(y==by && x==bx) bp = p;
+	for(int i=0;i<4;i++)
+	{
+		int ny = y+dy[i], nx = x+dx[i];
+		if(ny>=r || nx>=c || ny<0 || nx<0) continue;
+		if(mp[ny][nx]==0 || mp[ny][nx]>0) continue;
+		mp[ny][nx] = p;
+		dfs(ny, nx, p);
+	}
+}
+
 int main()
 {
-	int r, c, yxcnt = 0;
-	queue<pair<int, int>> q, iq, nq, wq;
 	scanf("%d %d", &r, &c);
 	for(int i=0;i<r;i++)
 	{
 		for(int j=0;j<c;j++)
 		{
-			scanf(" %c", &iw[i][j]);
-			if(iw[i][j]=='L')
+			char tmp;
+			scanf(" %c", &tmp);
+			if(tmp!='X') mp[i][j] = -1;
+			if(cnt==0 && tmp=='L')
 			{
-				yx[yxcnt][0] = i;
-				yx[yxcnt][1] = j;
-				yxcnt++;
-				iw[i][j] = '.';
+				cnt++;
+				ay = i;
+				ax = j;
 			}
-			if(iw[i][j]=='.') iq.push({i, j});
+			else if(cnt==1 && tmp=='L')
+			{
+				by = i;
+				bx = j;
+			}
 		}
 	}
-
-	bool flag = false;
-	int cnt = 0;
-	q.push({yx[0][0], yx[0][1]});
-	check[yx[0][0]][yx[0][1]] = true;
-	while(!flag)
+	cnt = 1;
+	queue<pair<int, pair<int, int>>> q;
+	for(int i=0;i<r;i++)
 	{
-		while(!nq.empty())
+		for(int j=0;j<c;j++)
 		{
-			q.push(nq.front());
-			nq.pop();
-		}
-		while(!q.empty())
-		{
-			if(flag) break;
-			int size = q.size();
-			while(size--)
+			if(mp[i][j]==-1)
 			{
-				if(flag) break;
-				int y = q.front().first, x = q.front().second;
-				q.pop();
-				for(int i=0;i<4;i++)
+				parent[cnt] = cnt;
+				dfs(i, j, cnt);
+				cnt++;
+			}
+			if(mp[i][j]!=0)
+			{
+				for(int k=0;k<4;k++)
 				{
-					int ny = y+dy[i], nx = x+dx[i];
-					if(ny>=r||nx>=c||ny<0||nx<0||check[ny][nx]) continue;
-					else if(iw[ny][nx]=='X')
+					int ny = i+dy[k], nx = j+dx[k];
+					if(ny>=r || nx>=c || ny<0 || nx<0) continue;
+					if(mp[ny][nx]==0)
 					{
-						check[ny][nx] = true;
-						nq.push({ny, nx});
-						continue;
-					}
-					if(ny==yx[1][0] && nx==yx[1][1])
-					{
-						flag = true;
+						q.push({mp[i][j], {i, j}});
 						break;
 					}
-					check[ny][nx] = true;
-					q.push({ny, nx});
 				}
 			}
-		}
-		if(flag) break;
-		cnt++;
-		while(!iq.empty())
-		{
-			int iy = iq.front().first, ix = iq.front().second;
-			iq.pop();
-			for(int i=0;i<4;i++)
-			{
-				int iny = iy+dy[i], inx = ix+dx[i];
-				if(iny>=r||inx>=c||iny<0||inx<0) continue;
-				else if(iw[iny][inx]=='X')
-				{
-					iw[iny][inx] = '.';
-					wq.push({iny, inx});
-				}
-			}
-		}
-		while(!wq.empty())
-		{
-			iq.push({wq.front().first, wq.front().second});
-			wq.pop();
 		}
 	}
-	printf("%d", cnt);
+	int day = 0;
+	while(!q.empty())
+	{
+		int size = q.size();
+		while(size--)
+		{
+			int y = q.front().second.first, x = q.front().second.second;
+			int num = q.front().first;
+			num = find(num);
+			q.pop();
+			for(int i=0;i<4;i++)
+			{
+				int ny = y+dy[i], nx = x+dx[i];
+				if(ny>=r || nx>=c || ny<0 || nx<0) continue;
+				if(mp[ny][nx]!=0)
+				{
+					merge(num, mp[ny][nx]);
+					if(find(ap)==find(bp))
+					{
+						printf("%d", day);
+						return 0;
+					}
+				}
+			}
+			num = find(num);
+			q.push({num, {y, x}});
+		}
+		for(int i=0;i<r;i++)
+		{
+			for(int j=0;j<c;j++)
+			{
+				printf("%d", mp[i][j]);
+			}
+			printf("\n");
+		}
+		printf("\n");
+		day++;
+		printf("day = %d\n", day);
+		for(int i=1;i<10;i++)
+			printf("%d ", parent[i]);
+		printf("\n");
+		size = q.size();
+		while(size--)
+		{
+			int y = q.front().second.first, x = q.front().second.second;
+			int num = q.front().first;
+			num = find(num);
+			q.pop();
+			for(int i=0;i<4;i++)
+			{
+				int ny = y+dy[i], nx = x+dx[i];
+				if(ny>=r || nx>=c || ny<0 || nx<0) continue;
+				if(mp[ny][nx]==0)
+				{
+					mp[ny][nx] = num;
+				}
+				else
+				{
+					merge(num, mp[ny][nx]);
+					if(find(ap)==find(bp))
+					{
+						printf("%d", day);
+						return 0;
+					}
+					num = find(num);
+				}
+				q.push({num, {ny, nx}});
+			}
+		}
+		for(int i=0;i<r;i++)
+		{
+			for(int j=0;j<c;j++)
+			{
+				printf("%d", mp[i][j]);
+			}
+			printf("\n");
+		}
+		printf("\n");
+	}
+
 	return 0;
 }
