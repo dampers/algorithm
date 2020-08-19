@@ -13,9 +13,17 @@ int main()
 	cin>>tc;
 	while(tc--)
 	{
-		int sx, sy, ex, ey;
-		cin>>sx>>sy>>ex>>ey;
-		
+		double x, y, xx, yy;
+		cin>>x>>y>>xx>>yy;
+		int n, cnt = 0;
+		cin>>n;
+		for(int i=0;i<n;i++)
+		{
+			double a, b, r;
+			cin>>a>>b>>r;
+			if((r*r>(a-x)*(a-x)+(b-y)*(b-y)) ^ (r*r>(a-xx)*(a-xx)+(b-yy)*(b-yy))) cnt++;
+		}
+		cout<<cnt<<endl;
 	}
 	return 0;
 }
