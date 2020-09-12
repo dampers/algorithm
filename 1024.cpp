@@ -19,9 +19,7 @@ int main()
 		if((n-k)%i==0 && (n-k)/i>=0)
 		{
 			for(int j=0;j<i;j++)
-			{
 				cout<<(n-k)/i+j<<' ';
-			}
 			return 0;
 		}
 	}
