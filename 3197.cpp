@@ -1,173 +1,170 @@
 #include <bits/stdc++.h>
-#define swap(a,b) (a)^=(b)^=(a)^=(b)
-#define endl '\n'
 using namespace std;
+#define swap(a,b) (a)^=(b)^=(a)^=(b)
 typedef long long lld;
 
-int mp[1505][1505];
-int dy[] = {0, 0, 1, -1};
+int r, c;
+int dy[] = {0, 0, -1, 1};
 int dx[] = {1, -1, 0, 0};
-int parent[1505], r, c;
-int ay, ax, ap, by, bx, bp, cnt;
+int gcheck[1501][1501];
+vector<string> mp;
+queue<pair<int, int>> post, prex;
+vector<int> parent(1);
 
-int find(int u)
+struct fuckswan
 {
-	if(u==parent[u]) return u;
-	return parent[u] = find(parent[u]);
-}
+	int y;
+	int x;
+};
+fuckswan swan[2];
 
-void merge(int u, int v)
-{
-	u = find(u);
-	v = find(v);
-	if(u==v) return;
-	if(u<v) swap(u, v);
-	parent[v] = u;
-}
+int find(int v);
+void merge(int v, int u);
+void init();
+void swan_init(int y, int x);
+void dotbfs(int y, int x, int parent);
 
-void dfs(int y, int x, int p)
-{
-	if(y==ay && x==ax) ap = p;
-	else if(y==by && x==bx) bp = p;
-	for(int i=0;i<4;i++)
-	{
-		int ny = y+dy[i], nx = x+dx[i];
-		if(ny>=r || nx>=c || ny<0 || nx<0) continue;
-		if(mp[ny][nx]==0 || mp[ny][nx]>0) continue;
-		mp[ny][nx] = p;
-		dfs(ny, nx, p);
-	}
-}
 
 int main()
 {
-	scanf("%d %d", &r, &c);
+	ios_base::sync_with_stdio(NULL);
+	cin.tie(NULL);
+	cout.tie(NULL);
+
+	cin>>r>>c;
+	mp.resize(r);
 	for(int i=0;i<r;i++)
+		cin>>mp[i];
+	init();
+	if(find(gcheck[swan[0].y][swan[0].x])==find(gcheck[swan[1].y][swan[1].x]))
 	{
-		for(int j=0;j<c;j++)
+		cout<<0;
+		return 0;
+	}
+	int cnt = 0;
+	while(!prex.empty())
+	{
+		cnt++;
+		int size = prex.size();
+		while(size--)
 		{
-			char tmp;
-			scanf(" %c", &tmp);
-			if(tmp!='X') mp[i][j] = -1;
-			if(cnt==0 && tmp=='L')
+			int y = prex.front().first, x = prex.front().second;
+			prex.pop();
+			mp[y][x] = '.';
+			bool flag = false;
+			for(int i=0;i<4;i++)
 			{
-				cnt++;
-				ay = i;
-				ax = j;
+				int ny = y+dy[i], nx = x+dx[i];
+				if(ny>=r||ny<0||nx>=c||nx<0) continue;
+				if(mp[ny][nx]=='X' && gcheck[ny][nx]==0)
+				{
+					gcheck[ny][nx] = -1;
+					prex.push({ny, nx});
+				}
+				if(gcheck[ny][nx]>0)
+				{
+					if(!flag)
+					{
+						flag = true;
+						gcheck[y][x] = gcheck[ny][nx];
+					}
+					else merge(gcheck[y][x], gcheck[ny][nx]);
+				}
 			}
-			else if(cnt==1 && tmp=='L')
+		}
+		if(find(gcheck[swan[0].y][swan[0].x])==find(gcheck[swan[1].y][swan[1].x]))
+		{
+			cout<<cnt;
+			return 0;
+		}
+	}
+	return 0;
+}
+
+int find(int v)
+{
+	if(parent[v]==v) return v;
+	return parent[v] = find(parent[v]);
+}
+void merge(int v, int u)
+{
+	v = find(v);
+	u = find(u);
+	if(u==v) return;
+	if(u>v) swap(u, v);
+	parent[u] = v;
+}
+
+void dotbfs(int y, int x, int parent)
+{
+	queue<pair<int, int>> dot;
+	dot.push({y, x});
+	while(!dot.empty())
+	{
+		y = dot.front().first, x = dot.front().second;
+		dot.pop();
+		for(int i=0;i<4;i++)
+		{
+			int ny = y+dy[i], nx = x+dx[i];
+			if(ny>=r||ny<0||nx>=c||nx<0) continue;
+			if(gcheck[ny][nx]!=0) continue;
+			if(mp[ny][nx]=='.' || mp[ny][nx]=='L')
 			{
-				by = i;
-				bx = j;
+				gcheck[ny][nx] = parent;
+				dot.push({ny, nx});
+			}
+			else if(mp[ny][nx]=='X'&&gcheck[ny][nx]==0)
+			{
+				gcheck[ny][nx] = -1;
+				prex.push({ny, nx});
 			}
 		}
 	}
-	cnt = 1;
-	queue<pair<int, pair<int, int>>> q;
+}
+
+void init()
+{
+	swan[0].x = -1;
 	for(int i=0;i<r;i++)
 	{
 		for(int j=0;j<c;j++)
 		{
-			if(mp[i][j]==-1)
+			if(mp[i][j]=='L') swan_init(i, j);
+			if(gcheck[i][j]!=0) continue;
+			if(mp[i][j]=='L' || mp[i][j]=='.')
 			{
-				parent[cnt] = cnt;
-				dfs(i, j, cnt);
-				cnt++;
+				parent.push_back(parent.size());
+				gcheck[i][j] = parent.size()-1;
+				dotbfs(i, j, gcheck[i][j]);
 			}
-			if(mp[i][j]!=0)
+			else if(mp[i][j]=='X' && gcheck[i][j]==0)
 			{
-				for(int k=0;k<4;k++)
+				for(int d=0;d<4;d++)
 				{
-					int ny = i+dy[k], nx = j+dx[k];
-					if(ny>=r || nx>=c || ny<0 || nx<0) continue;
-					if(mp[ny][nx]==0)
+					int ny = i+dy[d], nx = j+dx[d];
+					if(ny>=r||ny<0||nx>=c||nx<0) continue;
+					if(mp[ny][nx]=='.'||mp[ny][nx]=='L')
 					{
-						q.push({mp[i][j], {i, j}});
+						gcheck[i][j] = -1;
+						prex.push({i, j});
 						break;
 					}
 				}
 			}
 		}
 	}
-	int day = 0;
-	while(!q.empty())
-	{
-		int size = q.size();
-		while(size--)
-		{
-			int y = q.front().second.first, x = q.front().second.second;
-			int num = q.front().first;
-			num = find(num);
-			q.pop();
-			for(int i=0;i<4;i++)
-			{
-				int ny = y+dy[i], nx = x+dx[i];
-				if(ny>=r || nx>=c || ny<0 || nx<0) continue;
-				if(mp[ny][nx]!=0)
-				{
-					merge(num, mp[ny][nx]);
-					if(find(ap)==find(bp))
-					{
-						printf("%d", day);
-						return 0;
-					}
-				}
-			}
-			num = find(num);
-			q.push({num, {y, x}});
-		}
-		for(int i=0;i<r;i++)
-		{
-			for(int j=0;j<c;j++)
-			{
-				printf("%d", mp[i][j]);
-			}
-			printf("\n");
-		}
-		printf("\n");
-		day++;
-		printf("day = %d\n", day);
-		for(int i=1;i<10;i++)
-			printf("%d ", parent[i]);
-		printf("\n");
-		size = q.size();
-		while(size--)
-		{
-			int y = q.front().second.first, x = q.front().second.second;
-			int num = q.front().first;
-			num = find(num);
-			q.pop();
-			for(int i=0;i<4;i++)
-			{
-				int ny = y+dy[i], nx = x+dx[i];
-				if(ny>=r || nx>=c || ny<0 || nx<0) continue;
-				if(mp[ny][nx]==0)
-				{
-					mp[ny][nx] = num;
-				}
-				else
-				{
-					merge(num, mp[ny][nx]);
-					if(find(ap)==find(bp))
-					{
-						printf("%d", day);
-						return 0;
-					}
-					num = find(num);
-				}
-				q.push({num, {ny, nx}});
-			}
-		}
-		for(int i=0;i<r;i++)
-		{
-			for(int j=0;j<c;j++)
-			{
-				printf("%d", mp[i][j]);
-			}
-			printf("\n");
-		}
-		printf("\n");
-	}
+}
 
-	return 0;
+void swan_init(int y, int x)
+{
+	if(swan[0].x==-1)
+	{
+		swan[0].x = x;
+		swan[0].y = y;
+	}
+	else
+	{
+		swan[1].x = x;
+		swan[1].y = y;
+	}
 }
