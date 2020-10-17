@@ -12,9 +12,7 @@ int LIS(int k, vector<int>& v, vector<int>& dp)
 	if(ret!=-1) return ret;
 	ret = 1;
 	for(int i=k+1;i<=n;i++)
-	{
 		if(v[k]<v[i]) ret = max(ret, LIS(i, v, dp)+1);
-	}
 	return ret;
 }
 
