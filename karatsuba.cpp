@@ -6,7 +6,7 @@ typedef long long lld;
 
 void addto(vector<int>& a, vector<int>& b, int k)
 {
-    while(a.size()<b.size()+k) a.push_back(0);
+    a.resize(max(a.size()+1, b.size()+k));
     int carry = 0;
     for(int i=0;i<b.size();i++)
     {
@@ -14,8 +14,9 @@ void addto(vector<int>& a, vector<int>& b, int k)
         carry = a[i+k]/10;
         a[i+k] %= 10;
     }
-    if(carry!=0) a.push_back(1);
-    while(*(a.end()-1)==0) a.pop_back();
+    if(carry!=0 && a.back()!=0) a.push_back(1);
+    else if(carry!=0 && a.back()==0) a[a.size()-1] = 1;
+    while(a.size()>=1 && a.back()==0) a.pop_back();
 }
 
 void subfrom(vector<int>& a, vector<int>& b)
@@ -39,7 +40,7 @@ vector<int> karatsuba(vector<int>& a, vector<int>& b)
 {
     int alen = a.size(), blen = b.size();
     if(alen<blen) return karatsuba(b, a);
-    if(alen==0 || blen==0) return vector<int>();
+    if(alen<=0 || blen<=0) return vector<int>();
     else if(alen==1 && blen==1)
     {
         int tmp = a[0]*b[0];
