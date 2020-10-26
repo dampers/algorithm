@@ -26,7 +26,7 @@ int main()
 	cin.tie(NULL);
 	cout.tie(NULL);
 	cin>>n;
-	string a, b, tmp = "";
+	string a, b;
 	cin>>a>>b;
 	cin>>l>>r;
 	if(brute_force(a, b, 0, n, 0, 0)) cout<<"YES";
