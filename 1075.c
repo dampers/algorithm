@@ -1,5 +1,6 @@
 #include <stdio.h>
-int main(){
+int main()
+{
 	int n,f,d;
 	d = 0;
 	scanf("%d\n%d",&n,&f);
@@ -18,4 +19,4 @@ int main(){
 		printf("%d",d);
 	}
 	return 0;
-	}
+}
