@@ -5,9 +5,6 @@ typedef long long lld;
 int d[4];
 int main()
 {
-	ios_base::sync_with_stdio(NULL);
-	cin.tie(NULL);
-	cout.tie(NULL);
 	int a,b,c;
 	while(scanf(" %d %d %d", &a, &b, &c)==3)
 	{
