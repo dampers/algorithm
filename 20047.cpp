@@ -8,7 +8,7 @@ int n, l, r;
 
 bool dp(string& a, string& b, int pos, int check, int aindex)
 {
-	if(pos==n) return true;
+	if(pos==n && check==2) return true;
 	bool ret = false;
 	if(aindex==l || aindex==r) aindex++;
 	if(aindex<n && b[pos]==a[aindex])
