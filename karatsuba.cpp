@@ -23,7 +23,11 @@ void subfrom(vector<int>& a, vector<int>& b)
     for(int i=0;i<a.size();i++)
     {
         if(i<b.size()) a[i] -= b[i]+bor;
-        else a[i] -= bor;
+        else
+        {
+            a[i] -= bor;
+            if(!bor) break;
+        }
         if(a[i]<0)
         {
             a[i] += 10;
@@ -65,13 +69,10 @@ vector<int> karatsuba(vector<int>& a, vector<int>& b)
         return multiple(a, b);
 
     int half = alen/2;
-    vector<int> a0(a.begin(), a.begin()+half);
-    vector<int> a1(a.begin()+half, a.end());
-    vector<int> b0(b.begin(), b.begin()+min((int)b.size(), half));
-    vector<int> b1(b.begin()+min((int)b.size(), half), b.end());
+    vector<int> a0(a.begin(), a.begin()+half), a1(a.begin()+half, a.end());
+    vector<int> b0(b.begin(), b.begin()+min((int)b.size(), half)), b1(b.begin()+min((int)b.size(), half), b.end());
 
-    vector<int> z2 = karatsuba(a1, b1);
-    vector<int> z0 = karatsuba(a0, b0);
+    vector<int> z2 = karatsuba(a1, b1), z0 = karatsuba(a0, b0);
     addto(a0, a1, 0);
     addto(b0, b1, 0);
     vector<int> z1 = karatsuba(a0, b0);
