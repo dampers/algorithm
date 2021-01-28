@@ -43,10 +43,10 @@ int main()
 		for(size_t i=0;i<ansv.size();i++)
 		{
 			ansv[i] -= subs;
-			if(ansv[i] <= 0)
+			if(ansv[i] <= 0 || ansv[i] % (ansv.size()-i))
 			{
 				flag = false;
-				//break;
+				break;
 			}
 			subs += ansv[i] / (ansv.size()-i);
 			
