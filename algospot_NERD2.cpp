@@ -18,6 +18,7 @@ int main()
 		int np, nq, n;
 		cin>>n;
 		map<int, int> mp;
+		int ans = 0;
 		for(int i=0;i<n;i++)
 		{
 			cin>>np>>nq;
@@ -26,31 +27,20 @@ int main()
 			// can insert
 			if(it == mp.begin())
 			{
-				cout<<"Yes"<<endl;
-				if(mp.begin() == mp.end())
-				{
-					mp[np] = nq;
-				}
-				else if(mp.begin()->second < np) mp[np] = nq;
+				if(mp.begin() == mp.end() || mp.begin()->second < np) mp[np] = nq;
 			}
-			else
-			{
-				mp[np] = nq;
-				--it;
-			}
+			else mp[np] = nq;
 
 			// erase
 			it = mp.lower_bound(np);
 			for(auto k = mp.begin(); k != it;)
 			{
 				if(k->second > nq) k++;
-				k = mp.erase(k);
+				else k = mp.erase(k);
 			}
-			for(auto k = mp.begin(); k != mp.end(); k++)
-				cout<<k->first<<' '<<k->second<<endl;
-			cout<<endl;
-
+			ans += mp.size();
 		}
+		cout<<ans<<endl;
 	}
 	return 0;
 }
