@@ -4,6 +4,17 @@
 using namespace std;
 typedef long long lld;
 
+int get_psnum(int ps)
+{
+	int ret = 0;
+	while(ps>0)
+	{
+		ret += (ps%10)*(ps%10);
+		ps /= 10; 
+	}
+	return ret;
+}
+
 int main()
 {
 	ios_base::sync_with_stdio(NULL);
@@ -23,38 +34,22 @@ int main()
 			prime[j] = true;
 	}
 	set<int> st;
-	st.insert(2);
 	st.insert(4);
 	int tmp = 16;
 	while(tmp != 4)
 	{
 		st.insert(tmp);
-		int stmp = tmp;
-		tmp = 0;
-		while(stmp>0)
-		{
-			tmp += (stmp%10)*(stmp%10);
-			stmp /= 10; 
-		}
+		tmp = get_psnum(tmp);
 	}
-	int ans = 0;
 	for(size_t i=0;i<prime_number.size();i++)
 	{
 		int stmp = prime_number[i];
 		while(stmp != 1)
 		{
 			if(st.find(stmp) != st.end()) break;
-			int atmp = stmp;
-			stmp = 0;
-			while(atmp>0)
-			{
-				stmp += (atmp%10) * (atmp%10);
-				atmp /= 10;
-			}
+			stmp = get_psnum(stmp);
 		}
 		if(stmp == 1) cout<<prime_number[i]<<endl;
-			//ans++;
 	}
-	//cout<<ans<<endl;
 	return 0;
 }
