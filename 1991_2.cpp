@@ -40,17 +40,10 @@ void postorder(struct Node* nodeP)
 
 struct Node* tree[26];
 
-void init_tree()
+void init_tree(int size)
 {
-	for(int i=0;i<26;i++) tree[i] = (struct Node*)malloc(sizeof(struct Node));
-}
-
-int main()
-{
-	int n;
-	scanf("%d", &n);
-	init_tree();
-	for(int i=0;i<n;i++)
+	for(int i=0;i<size;i++) tree[i] = (struct Node*)malloc(sizeof(struct Node));
+	for(int i=0;i<size;i++)
 	{
 		char parent, left, right;
 		scanf(" %c %c %c", &parent, &left, &right);
@@ -65,8 +58,14 @@ int main()
 			tree[parent-'A']->right_child = 0;
 		}
 		else tree[parent-'A']->right_child = tree[right-'A'];
-
 	}
+}
+
+int main()
+{
+	int n;
+	scanf("%d", &n);
+	init_tree(n);
 	preorder(tree[0]);
 	cout << endl;
 	inorder(tree[0]);
