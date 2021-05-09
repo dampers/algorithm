@@ -43,12 +43,6 @@ int main()
 		for(int i=1;i<=n;i++)
 		{
 			if(visit[i]) continue;
-			else if(select[i] == i)
-			{
-				ans++;
-				visit[i] = gn++;
-				continue;
-			}
 			ans += dfs(i, gn++, select, visit);
 			flag = false;
 		}
