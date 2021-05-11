@@ -1,90 +1,80 @@
 #include <bits/stdc++.h>
+
+using namespace std;
+
 #define swap(a,b) (a)^=(b)^=(a)^=(b)
 #define endl '\n'
-using namespace std;
 typedef long long lld;
 
-lld a[50][5][5], bb[5][5];
+const int dx[] = {1, -1, 0, 0};
+const int dy[] = {0, 0, 1, -1};
 
+void matrix_multiple(vector<vector<int>>& u, vector<vector<int>>& v)
+{
+	vector<vector<int>> ret(u.size(), vector<int>(u.size(), 0));
+	for(size_t i=0;i<u.size();i++)
+	{
+		for(size_t j=0;j<u[i].size();j++)
+		{
+			for(size_t k=0;k<u[i].size();k++)
+			{
+				ret[i][j] = (ret[i][j] + u[i][k] * v[k][j]) % 1000;
+			}
+		}
+	}
+	for(size_t i=0;i<u.size();i++)
+	{
+		for(size_t j=0;j<u.size();j++)
+		{
+			v[i][j] = ret[i][j];
+		}
+	}
+}
+
+void binary_exp(lld b, vector<vector<int>>& a, vector<vector<int>>& ans)
+{
+	vector<vector<int>> tmp(a.size(), vector<int>(a.size(), 0));
+	for(int i=0;i<a.size();i++)
+		for(int j=0;j<a.size();j++)
+			tmp[i][j] = a[i][j];
+
+	while(b)
+	{
+		if(b & 1LL)
+		{
+			matrix_multiple(tmp, ans);
+		}
+		matrix_multiple(tmp, tmp);
+		b >>= 1;
+	}
+}
 
 int main()
 {
-	ios_base::sync_with_stdio(NULL);
+	cin.sync_with_stdio(NULL);
 	cin.tie(NULL);
 	cout.tie(NULL);
-	vector<lld> v;
 	int n;
 	lld b;
-	cin>>n>>b;
+	cin >> n >> b;
+	vector<vector<int>> a(n, vector<int>(n, 0)), ans(n, vector<int>(n, 0));
+	for(int i=0;i<n;i++)
+		ans[i][i] = 1;
 	for(int i=0;i<n;i++)
 	{
 		for(int j=0;j<n;j++)
 		{
-			cin>>a[1][i][j];
-			a[1][i][j] %= 1000;
+			cin >> a[i][j];
 		}
 	}
-	v.push_back(b);
-	while(b>1)
-	{
-		v.push_back(b/2);
-		b /= 2;
-	}
-	int size = v.size();
-	reverse(v.begin(), v.end());
-	/*for(int i=0;i<size;i++)
-		cout<<v[i]<<' ';
-	cout<<endl;*/
-	for(int i=2;i<size+1;i++)
-	{
-		for(int j=0;j<n;j++)
-		{
-			for(int k=0;k<n;k++)
-			{
-				for(int l=0;l<n;l++)
-				{
-					a[i][j][k] += (a[i-1][j][l]*a[i-1][l][k])%1000;
-					a[i][j][k] %= 1000;
-				}
-			}
-		}
-		if(v[i-1]%2)
-		{
-			for(int j=0;j<n;j++)
-				for(int k=0;k<n;k++)
-					bb[j][k] = 0;
-			for(int j=0;j<n;j++)
-			{
-				for(int k=0;k<n;k++)
-				{
-					for(int l=0;l<n;l++)
-					{
-						bb[j][k] += (a[i][j][l]*a[1][l][k])%1000;
-						bb[j][k] %= 1000;
-					}
-				}
-			}
-			for(int j=0;j<n;j++)
-				for(int k=0;k<n;k++)
-					a[i][j][k] = bb[j][k];
-		}
-		/*for(int j=0;j<n;j++)
-		{
-			for(int k=0;k<n;k++)
-			{
-				cout<<a[i][j][k]<<' ';
-			}
-			cout<<endl;
-		}
-		cout<<endl;*/
-	}
+
+	binary_exp(b, a, ans);
 	for(int i=0;i<n;i++)
 	{
 		for(int j=0;j<n;j++)
-		{
-			cout<<a[size][i][j]<<' ';
-		}
-		cout<<'\n';
-	}
+			cout << ans[i][j] << ' ';
+		cout << endl;
+	}	
+
 	return 0;
 }
