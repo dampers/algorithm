@@ -1,150 +1,148 @@
 #include <bits/stdc++.h>
+
+using namespace std;
+
 #define swap(a,b) (a)^=(b)^=(a)^=(b)
 #define endl '\n'
-using namespace std;
 typedef long long lld;
 
-int mp[1505][1505];
-int dy[] = {0, 0, 1, -1};
-int dx[] = {1, -1, 0, 0};
-int parent[1200000], r, c;
-int ay, ax, ap, by, bx, bp, cnt;
+const int dx[] = {1, -1, 0, 0};
+const int dy[] = {0, 0, 1, -1};
+
+string ice[1505];
+int dismap[1505][1505];
+int r, c;
+int parent[2500001];
+
+void input(pair<int, int>& l1, pair<int, int>& l2)
+{
+	for(int i=0;i<r;i++)
+	{
+		cin >> ice[i];
+		for(int j=0;j<c;j++)
+		{
+			if(ice[i][j] == 'L')
+			{
+				if(l1.first == -1)
+				{
+					l1.first = i;
+					l1.second = j;
+				}
+				else
+				{
+					l2.first = i;
+					l2.second = j;
+				}
+			}
+		}
+	}
+}
+
+void dfs(int y, int x, int discnt, queue<pair<int, int>>& q)
+{
+	dismap[y][x] = discnt;
+	for(int i=0;i<4;i++)
+	{
+		int ny = y+dy[i], nx = x+dx[i];
+		if(ny < 0 || nx < 0 || ny >= r || nx >= c) continue;
+		if(dismap[ny][nx]) continue;
+		if(ice[ny][nx] == 'X')
+		{
+			q.push({ny, nx});
+			continue;
+		}
+		dfs(ny, nx, discnt, q);
+	}
+}
 
 int find(int u)
 {
-	if(u==parent[u]) return u;
-	return parent[u] = find(parent[u]);
+	if(parent[u] == u) return u;
+	return parent[u] = find(parent[u]); 
 }
 
 void merge(int u, int v)
 {
 	u = find(u);
 	v = find(v);
-	if(u==v) return;
-	if(u<v) swap(u, v);
-	parent[v] = u;
-}
-
-void dfs(int y, int x, int p)
-{
-	if(y==ay && x==ax) ap = p;
-	else if(y==by && x==bx) bp = p;
-	for(int i=0;i<4;i++)
-	{
-		int ny = y+dy[i], nx = x+dx[i];
-		if(ny>=r || nx>=c || ny<0 || nx<0) continue;
-		if(mp[ny][nx]==0 || mp[ny][nx]>0) continue;
-		mp[ny][nx] = p;
-		dfs(ny, nx, p);
-	}
+	if(u == v) return;
+	parent[u] = v;
 }
 
 int main()
 {
-	scanf("%d %d", &r, &c);
+	cin.sync_with_stdio(NULL);
+	cin.tie(NULL);
+	cout.tie(NULL);
+
+	cin >> r >> c;
+	pair<int, int> l1 = {-1, -1}, l2 = {-1, -1};
+
+	input(l1, l2);
+	
+	queue<pair<int, int>> q;
+	int discnt = 0;
 	for(int i=0;i<r;i++)
 	{
 		for(int j=0;j<c;j++)
 		{
-			char tmp;
-			scanf(" %c", &tmp);
-			if(tmp!='X') mp[i][j] = -1;
-			if(cnt==0 && tmp=='L')
+			if((ice[i][j] == '.' || ice[i][j] == 'L') && dismap[i][j] == 0)
 			{
-				cnt++;
-				ay = i;
-				ax = j;
-			}
-			else if(cnt==1 && tmp=='L')
-			{
-				by = i;
-				bx = j;
+				discnt++;
+				parent[discnt] = discnt;
+				dfs(i, j, discnt, q);
 			}
 		}
 	}
-	cnt = 1;
-	queue<pair<int, pair<int, int>>> q;
-	for(int i=0;i<r;i++)
-	{
-		for(int j=0;j<c;j++)
-		{
-			if(mp[i][j]==-1)
-			{
-				parent[cnt] = cnt;
-				dfs(i, j, cnt);
-				cnt++;
-			}
-			if(mp[i][j]!=0)
-			{
-				for(int k=0;k<4;k++)
-				{
-					int ny = i+dy[k], nx = j+dx[k];
-					if(ny>=r || nx>=c || ny<0 || nx<0) continue;
-					if(mp[ny][nx]==0)
-					{
-						q.push({mp[i][j], {i, j}});
-						break;
-					}
-				}
-			}
-		}
-	}
+
 	int day = 0;
+	queue<int> disq;
+
 	while(!q.empty())
 	{
-		int size = q.size();
-		while(size--)
+		if(find(dismap[l1.first][l1.second]) == find(dismap[l2.first][l2.second]))
 		{
-			int y = q.front().second.first, x = q.front().second.second;
-			int num = q.front().first;
-			num = find(num);
-			q.pop();
-			for(int i=0;i<4;i++)
-			{
-				int ny = y+dy[i], nx = x+dx[i];
-				if(ny>=r || nx>=c || ny<0 || nx<0) continue;
-				if(mp[ny][nx]!=0)
-				{
-					merge(num, mp[ny][nx]);
-					if(find(ap)==find(bp))
-					{
-						printf("%d", day);
-						return 0;
-					}
-				}
-			}
-			q.push({num, {y, x}});
+			cout << day;
+			return 0;
 		}
 		day++;
-		size = q.size();
+		size_t size = q.size();
 		while(size--)
 		{
-			int y = q.front().second.first, x = q.front().second.second;
-			int num = q.front().first;
-			num = find(num);
+			int y = q.front().first, x = q.front().second;
+			ice[y][x] = '.';
 			q.pop();
 			for(int i=0;i<4;i++)
 			{
 				int ny = y+dy[i], nx = x+dx[i];
-				if(ny>=r || nx>=c || ny<0 || nx<0) continue;
-				if(mp[ny][nx]==0)
+				if(ny < 0 || nx < 0 || ny >= r || nx >= c) continue;
+				if(ice[ny][nx] == 'X')
 				{
-					mp[ny][nx] = num;
+					ice[ny][nx] = '.';
+					q.push({ny, nx});
 				}
-				else
+				else if(dismap[ny][nx])
 				{
-					merge(num, mp[ny][nx]);
-					if(find(ap)==find(bp))
-					{
-						printf("%d", day);
-						return 0;
-					}
-					num = find(num);
+					disq.push(find(dismap[ny][nx]));
 				}
-				q.push({num, {ny, nx}});
 			}
+			int base = 0;
+			while(!disq.empty())
+			{
+				int tmp = disq.front();
+				disq.pop();
+				if(base == 0)
+				{
+					base = tmp;
+					continue;
+				}
+				merge(base, tmp);
+			}
+			dismap[y][x] = base;
 		}
 	}
+
+	cout << day;
 
 	return 0;
 }
