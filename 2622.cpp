@@ -12,15 +12,12 @@ int main()
 	int k;
 	cin>>k;
 	int cnt = 0;
-	for(int i=1;i<k/2;i++)
-		for(int j=i;j<k-i;j++)
+	for(int i=1;i<k;i++)
+		for(int j=i;j<k;j++)
 		{
-			int lk = k-(i+j);
-			if(i+j>lk && lk>=i && lk>=j)
-			{
-				cnt++;
-				//cout<<i<<' '<<j<<' '<<k-(i+j)<<endl;;
-			}
+			int lk = k-i-j;
+			if(j > lk) break;
+			if(i+j > lk) cnt++;
 		}
 	cout<<cnt;
 	return 0;
