@@ -26,6 +26,12 @@ public:
 		this->speed = -1;
 	}
 	Shark(int speed, int dir, int z) : dir(dir), speed(speed), z(z) {}
+	void set(int z, int dir, int speed)
+	{
+		this->z = z;
+		this->dir = dir;
+		this->speed = speed;
+	}
 	void set(Shark K)
 	{
 		this->z = K.z;
@@ -61,41 +67,37 @@ void move(vector<vector<Shark>>& v, vector<vector<Shark>>& movev)
 		{
 			if(v[i][j].z == -1) continue;
 			int ty = i, tx = j, tdir = v[i][j].dir, tz = v[i][j].z, tspeed = v[i][j].speed;
+			
 			if(v[i][j].dir == 0 || v[i][j].dir == 1)
 			{
-				if(v[i][j].z == 4)
-				{
-					cout << ty << ' ' << tx << ' ' << tz << ' ' << tdir << endl;
-				}
-				if(v[i][j].dir == 0 && i != r-1) ty += r;
-				ty = (ty + v[i][j].speed) % (r+r);
+				if(v[i][j].dir == 0) ty += (r-1-ty) * 2;
+				ty = (ty + v[i][j].speed) % (r+r-2);
 				tdir = 1;
 				if(ty >= r)
 				{
-					ty = (ty-(r+r-1)) * -1;
+					ty = (ty-(r+r-2)) * -1;
 					tdir = 0;
 				}
 
 			}
 			if(v[i][j].dir == 2 || v[i][j].dir == 3)
 			{
-				if(v[i][j].dir == 3 && j != c-1) tx += c;
-				tx = (tx+v[i][j].speed) % (c+c);
+				if(v[i][j].dir == 3) tx += (c-1-tx) * 2;
+				tx = (tx+v[i][j].speed) % (c+c-2);
 				tdir = 2;
 				if(tx >= c)
 				{
-					tx = (tx-(c+c-1)) * -1;
+					tx = (tx-(c+c-2)) * -1;
 					tdir = 3;
 				}
 			}
 			if(movev[ty][tx].z < tz)
 			{
-				movev[ty][tx].set(v[i][j]);
+				movev[ty][tx].set(tz, tdir, tspeed);
 			}
 			v[i][j].reset();
 		}
 	}
-	printv(movev);
 	for(size_t i=0;i<movev.size();i++)
 	{
 		for(size_t j=0;j<movev[i].size();j++)
@@ -121,12 +123,20 @@ int32_t main()
 	for(int i=0;i<m;i++)
 	{
 		cin >> tr >> tc >> tspeed >> tdir >> tz;
-		v[tr-1][tc-1].speed = tspeed;
-		v[tr-1][tc-1].dir = tdir-1;
-		v[tr-1][tc-1].z = tz;
+		tr--;
+		tc--;
+		tdir--;
+		if(tr == 0 && tdir == 0) tdir = 1;
+		if(tr == r-1 && tdir == 1) tdir = 0;
+		if(tc == c-1 && tdir == 2) tdir = 3;
+		if(tc == 0 && tdir == 3) tdir = 2;
+		v[tr][tc].speed = tspeed;
+		v[tr][tc].dir = tdir;
+		v[tr][tc].z = tz;
 	}
-	int ans = 0;
 
+
+	int ans = 0;
 	for(int fx=0;fx<c;fx++)
 	{
 		for(int fy=0;fy<r;fy++)
@@ -138,10 +148,8 @@ int32_t main()
 				break;
 			}
 		}
-		printv(v);
-		cout << endl;
 		move(v, movev);
-		cout << ans << endl;
+		//cout << ans << endl;
 	}
 	cout << ans;
 	return 0;
