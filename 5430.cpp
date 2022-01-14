@@ -1,76 +1,92 @@
 #include <bits/stdc++.h>
+
+using namespace std;
+
 #define swap(a,b) (a)^=(b)^=(a)^=(b)
 #define endl '\n'
-using namespace std;
-typedef long long lld;
+#define int long long
 
-int main()
+using pii = pair<int, int>;
+
+const double EPS = 1e-9;
+const int dx[] = {1, -1, 0, 0};
+const int dy[] = {0, 0, 1, -1};
+
+int32_t main()
 {
-	ios_base::sync_with_stdio(NULL);
+	cin.sync_with_stdio(NULL);
 	cin.tie(NULL);
 	cout.tie(NULL);
-	deque<int> dq;
+
 	int tc;
-	cin>>tc;
+	cin >> tc;
 	while(tc--)
 	{
-		string s;
-		cin.ignore();
-		getline(cin, s);
-		int n, tmp;
-		cin>>n;
-		cin.ignore(1, '[');
-		for(int i=0;i<n;i++)
+		deque<int> dq;
+		string orders;
+		cin >> orders;
+		int n;
+		cin >> n;
+		string sl;
+		cin >> sl;
+		int tmp = 0;
+		if(n > 0)
 		{
-			cin>>tmp;
-			dq.push_back(tmp);
-			if(i<n-1) cin.ignore(1, ',');
-		}
-		cin.ignore(1, ']');
-		int len = s.length(), flag = 1;
-		bool bflag = false;
-		for(int i=0;i<len;i++)
-		{
-			if(s[i]=='R')
+			for(size_t i=1;i<sl.size();i++)
 			{
-				flag *= -1;
-			}
-			else if(s[i]=='D')
-			{
-				if(dq.empty())
+				if(sl[i] == ',' || sl[i] == ']')
 				{
-					bflag = true;
+					dq.push_back(tmp);
+					tmp = 0;
+				}
+				else
+				{
+					tmp *= 10;
+					tmp += sl[i]-'0';
+				}
+			}
+		}
+		bool dir = false;
+		bool error = false;
+		for(char& order : orders)
+		{
+			if(order == 'R') dir = !dir;
+			if(order == 'D')
+			{
+				if(dq.size() == 0)
+				{
+					error = true;
 					break;
 				}
-				if(flag==1) dq.pop_front();
-				else dq.pop_back();
+				if(dir) dq.pop_back();
+				else dq.pop_front();
 			}
 		}
-		if(bflag) cout<<"error"<<endl;
+
+		if(error) cout << "error\n";
 		else
 		{
-			int size = dq.size();
-			cout<<"[";
-			if(flag==1)
+			cout << "[";
+			if(dir)
 			{
-				for(int i=0;i<size;i++)
+				while(!dq.empty())
 				{
-					cout<<dq[i];
-					if(i<size-1) cout<<',';
+					cout << dq.back();
+					if(dq.size() > 1) cout << ',';
+					dq.pop_back();
 				}
-				cout<<"]"<<endl;
 			}
 			else
 			{
-				for(int i=size-1;i>=0;i--)
+				while(!dq.empty())
 				{
-					cout<<dq[i];
-					if(i>0) cout<<',';
+					cout << dq.front();
+					if(dq.size() > 1) cout << ',';
+					dq.pop_front();
 				}
-				cout<<"]"<<endl;
 			}
+			cout << "]\n";
 		}
-		dq.clear();
 	}
 	return 0;
 }
