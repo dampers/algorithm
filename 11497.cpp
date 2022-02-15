@@ -30,22 +30,15 @@ int32_t main()
 			cin >> v[i];
 		}
 		sort(v.begin(), v.end());
-		int left = v[0], right = v[0];
+		int lr[2] = {v[0], v[0]};
 		int ans = abs(v[0]-v[1]);
 		for(int i=1;i<n;i++)
 		{
-			if(i%2)
-			{
-				ans = max(ans, abs(left-v[i]));
-				left = v[i];
-			}
-			else
-			{
-				ans = max(ans, abs(right-v[i]));
-				right = v[i];
-			}
+			ans = max(ans, v[i]-lr[i%2]);
+			lr[i%2] = v[i];
 		}
 		cout << ans << endl;
 	}
+
 	return 0;
 }
