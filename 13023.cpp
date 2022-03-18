@@ -1,48 +1,58 @@
 #include <bits/stdc++.h>
+
+using namespace std;
+
 #define swap(a,b) (a)^=(b)^=(a)^=(b)
 #define endl '\n'
-using namespace std;
-typedef long long lld;
+#define int long long
 
-queue<int> q[2001];
-bool flag = false;
-void f(int pos, int k)
+using pii = pair<int, int>;
+
+const double EPS = 1e-9;
+const int dx[] = {1, -1, 0, 0};
+const int dy[] = {0, 0, 1, -1};
+
+bool dfs(int curr, int cnt, vector<vector<int>>& v, vector<bool>& check)
 {
-	printf("pos = %d\n", pos);
-	if(pos==4)
+	if(cnt == 4) return true;
+	bool ret = false;
+	check[curr] = true;
+	for(int &next : v[curr])
 	{
-		flag = true;
-		return;
+		if(check[next]) continue;
+		ret |= dfs(next, cnt+1, v, check);
 	}
-	if(flag) return;
-	while(!q[k].empty())
-	{
-		int df = q[k].front();
-		q[k].pop();
-		f(pos+1, df);
-	}
+	check[curr] = false;
+	return ret;
 }
 
-int main()
+int32_t main()
 {
-	ios_base::sync_with_stdio(NULL);
+	cin.sync_with_stdio(NULL);
 	cin.tie(NULL);
 	cout.tie(NULL);
+
 	int n, m;
-	cin>>n>>m;
+	cin >> n >> m;
+	vector<vector<int>> v(n, vector<int>());
+	int a, b;
 	for(int i=0;i<m;i++)
 	{
-		int tmpa, tmpb;
-		cin>>tmpa>>tmpb;
-		q[tmpa].push(tmpb);
-		//q[tmpb].push(tmpa);
+		cin >> a >> b;
+		v[a].push_back(b);
+		v[b].push_back(a);
 	}
+
 	for(int i=0;i<n;i++)
 	{
-		if(flag) break;
-		f(0, i);
+		vector<bool> check(n, false);
+		if(dfs(i, 0, v, check))
+		{
+			cout << 1;
+			return 0;
+		}
 	}
-	if(flag) printf("1");
-	else printf("0");
+	cout << 0;
+
 	return 0;
 }
