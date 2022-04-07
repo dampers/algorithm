@@ -21,12 +21,8 @@ int32_t main()
     int n;
     cin >> n;
     vector<int> v(n, 0);
-    int mn = INT_MAX;
     for (int i = 0; i < n; i++)
-    {
         cin >> v[i];
-        mn = min(mn, v[i]);
-    }
 
     vector<int> ansv(v[0], 1);
     int curr = v[0];
@@ -44,9 +40,7 @@ int32_t main()
     cout << fixed;
     int sum = 0;
     for (int i = 0; i < curr; i++)
-    {
         sum += ansv[i] * i;
-    }
     double ans = sum / (double)v[0];
     cout << ans;
 
