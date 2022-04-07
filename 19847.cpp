@@ -30,13 +30,12 @@ int32_t main()
     {
         if (curr > v[i])
         {
-            int p = curr / v[i] - 1, m = curr % v[i];
             for (int j = v[i]; j < curr; j++)
                 ansv[j % v[i]] += ansv[j];
             curr = v[i];
         }
     }
-    cout.precision(11);
+    cout.precision(9);
     cout << fixed;
     int sum = 0;
     for (int i = 0; i < curr; i++)
