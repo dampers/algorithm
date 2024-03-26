@@ -26,6 +26,9 @@ void solve()
 		adj[u].push_back({d, {c, v}});
 	}
 
+    for(int i=1;i<=n;i++)
+        sort(adj[i].begin(), adj[i].end());
+
 	// priority_queue<pair<int, pii>, vector<pair<int, pii>>, greater<pair<int, pii>>> pq;
     queue<pair<int, pii>> pq;
 	for(int i=0;i<101;i++)
