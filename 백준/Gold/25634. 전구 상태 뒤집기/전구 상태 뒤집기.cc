@@ -35,32 +35,16 @@ int32_t main()
             cur += a[i];
             psum[i] = psum[i-1] - a[i];
         }
-        else
-        {
-            psum[i] = psum[i-1] + a[i];
-        }
+        else psum[i] = psum[i-1] + a[i];
     }
-    // for(int i=1;i<=N;i++)
-    //     cout << psum[i] << ' ' ;
-    // cout << endl;
     int mx = psum[1];
-    int left = 0, right = 1;
-
+    int left = 0;
     for(int i=1;i<=N;i++)
     {
-        right = i;
-        // cout << psum[left] << ' ' << psum[right] << endl;
-        mx = max(mx, psum[right]-psum[left]);
-        if(psum[left] > psum[right]) left = right;
+        mx = max(mx, psum[i]-psum[left]);
+        if(psum[left] > psum[i]) left = i;
     }
-    // cout << cur << ' ' << mx << endl;
-
     cur += mx;
     cout << cur << endl;
-
-
-
-
-
     return 0;
 }
